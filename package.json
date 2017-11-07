@@ -6,6 +6,6 @@
   "license": "MIT",
   "repository": "patch-graph/gitjection",
   "dependencies": {
-    "trigger-travis": "^0.1.0",
+    "trigger-travis": "^0.1.0"
   }
 }
