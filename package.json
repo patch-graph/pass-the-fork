@@ -2,10 +2,15 @@
   "name": "gitjection",
   "version": "0.0.1",
   "description": "inject forked ruby dependencies into Travis builds",
-  "keywords": ["travis", "dependent", "pull request"],
+  "keywords": [
+    "travis",
+    "dependent",
+    "pull request"
+  ],
   "license": "MIT",
   "repository": "patch-graph/gitjection",
   "dependencies": {
+    "js-yaml": "^3.10.0",
     "trigger-travis": "^0.1.0"
   }
 }

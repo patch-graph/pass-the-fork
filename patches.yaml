@@ -1,0 +1,30 @@
+# Top keys are arbitrary nicknames.
+# Currently, depends_on must include all transitive dependencies.
+
+https://github.com/ManageIQ/more_core_extensions/pull/59:
+  gem: more_core_extensions
+  github: cben/more_core_extensions
+  branch: decimal_si_precise
+  test: no
+
+https://github.com/ManageIQ/manageiq/pull/16722:
+  gem: manageiq
+  github: cben/manageiq
+  branch: quota-history
+  depends_on:
+    - https://github.com/ManageIQ/more_core_extensions/pull/59
+
+https://github.com/ManageIQ/manageiq-providers-kubernetes/pull/198:
+  gem: manageiq-providers-kubernetes
+  github: cben/manageiq-providers-kubernetes
+  branch: quota-history
+  depends_on:
+    - https://github.com/ManageIQ/more_core_extensions/pull/59
+    - https://github.com/ManageIQ/manageiq/pull/16722
+
+manageiq-providers-openshift:
+  github: cben/manageiq-providers-openshift
+  depends_on:
+    - https://github.com/ManageIQ/manageiq-providers-kubernetes/pull/198
+    - https://github.com/ManageIQ/more_core_extensions/pull/59
+    - https://github.com/ManageIQ/manageiq/pull/16722
