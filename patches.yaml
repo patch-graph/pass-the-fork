@@ -5,7 +5,7 @@ https://github.com/ManageIQ/more_core_extensions/pull/59:
   gem: more_core_extensions
   github: cben/more_core_extensions
   branch: decimal_si_precise
-  test: no
+  test: false
 
 https://github.com/ManageIQ/manageiq/pull/16722:
   gem: manageiq
@@ -13,6 +13,7 @@ https://github.com/ManageIQ/manageiq/pull/16722:
   branch: quota-history
   depends_on:
     - https://github.com/ManageIQ/more_core_extensions/pull/59
+  test: false
 
 https://github.com/ManageIQ/manageiq-providers-kubernetes/pull/198:
   gem: manageiq-providers-kubernetes
@@ -21,6 +22,7 @@ https://github.com/ManageIQ/manageiq-providers-kubernetes/pull/198:
   depends_on:
     - https://github.com/ManageIQ/more_core_extensions/pull/59
     - https://github.com/ManageIQ/manageiq/pull/16722
+  test: false
 
 manageiq-providers-openshift:
   github: cben/manageiq-providers-openshift
