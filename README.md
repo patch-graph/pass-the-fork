@@ -60,3 +60,11 @@ that were not necessarily aware of each other.
     For now I'd like to get as far as possible without bots, only CLI anybody can run...
 
 - [ ] Record versions actually used in a build? (feels a good idea, but what's the use case? possibly belongs in separate project.)
+
+## Prior art
+
+- [Trigger a Travis CI build from another project’s build](https://hiddentao.com/archives/2016/08/29/triggering-travis-ci-build-from-another-projects-build/), Ramesh Nair, https://github.com/waigo/waigo/blob/master/scripts/triggerDocSiteBuild.js
+- https://stackoverflow.com/a/34273424/239657, Michael Ernst, https://github.com/mernst/plume-lib/blob/master/bin/trigger-travis.sh
+- https://github.com/stephanmg/travis-dependent-builds, Stephan Grein
+- [http://eng.rightscale.com/2015/04/27/dependent-builds-in-travis.html](Dependent builds in Travis), Sean McGivern — obsolete, was restarting builds before trigger new build was possible.
+- [Improving hosted continuous integration services](https://publishup.uni-potsdam.de/frontdoor/index/index/docId/9425), Christopher Weyand, Jonas Chromik, Lennard Wolf, Steffen Kötte, Konstantin Haase, Tim Felgentreff, Jens Lincke, Robert Hirschfeld
