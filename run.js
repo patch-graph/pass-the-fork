@@ -2,10 +2,13 @@
 
 var yaml = require('js-yaml');
 var fs = require('fs');
+var triggerTravis = require('trigger-travis');
 
 var args = process.argv.slice(2);
 var yamlFilename = args[0];
 var patches = yaml.safeLoad(fs.readFileSync(yamlFilename, 'utf8'), {filename: yamlFilename});
+
+var travisToken = process.env.TRAVIS_API_TOKEN;
 
 function travisConfigForTarget(targetNickname) {
     var injectGems = {};
@@ -17,21 +20,39 @@ function travisConfigForTarget(targetNickname) {
         }
     }
 
-    return yaml.safeDump({
+    return {
         "merge_mode": "deep_merge",
+        "cache": false,
         "before_install": [
+            // Setting env vars by export command rather than `env:` is an attempt to avoid issues
+            // with depending on how exactly `env:` was declared in original .travis.yml
+            // https://github.com/travis-ci/docs-travis-ci-com/issues/1485
             `export INJECT_GEMS='${JSON.stringify(injectGems)}'`,
             "git clone https://github.com/patch-graph/gitjection",
             "gitjection/injectors/inject-all.sh"
         ]
-    });
+    };
 }
 
 for (var nickname in patches) {
     var patch = patches[nickname];
+    var config = travisConfigForTarget(nickname);
     console.log('---');
-    console.log(`# For ${nickname}`);
+    console.log(`# For ${patch.github}, test = ${patch.test}`);
     if (patch.test !== false) {
-        console.log(travisConfigForTarget(nickname));
+        console.log(yaml.safeDump(config));
+        if (travisToken === undefined) {
+            console.error('TRAVIS_API_TOKEN env var not set, not executing');
+        } else {
+            var [owner, repo] = patch.github.split('/');
+            triggerTravis.pull({
+                token: travisToken,
+                owner: owner,
+                repo: repo,
+                branch: patch.branch || 'master',
+                config: config,
+                debug: false
+            });
+        }
     }
 }
