@@ -7,7 +7,7 @@ if ENV['INJECT_GEMS']
     @dependencies.delete_if {|d| d.name == gem_name }
     git = options['git']
     branch = options['branch']
-    puts "gitjection: gem(#{gem_name.inspect}, git: #{git.inspect}, branch: #{branch.inspect})"
+    STDERR.puts "gitjection: gem(#{gem_name.inspect}, git: #{git.inspect}, branch: #{branch.inspect})"
     gem(gem_name, git: git, branch: branch)
   end
 end
