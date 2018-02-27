@@ -40,11 +40,11 @@ for (var nickname in patches) {
     var config = travisConfigForTarget(nickname);
     console.log('---');
     console.log(`# For ${patch.github}`);
-    if (patch.test !== false) {
+    if (patch.test === false) {
         console.log('# test: false, skipping.');
         continue;
     }
-    if ((patch.depends_on || []) == []) {
+    if (patch.test !== true && (patch.depends_on || []).length == 0) {
         console.log('# No dependencies, skipping (normal Travis build should work). Set test: true to force.');
         continue;
     }
