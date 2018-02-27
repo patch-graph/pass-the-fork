@@ -38,21 +38,28 @@ for (var nickname in patches) {
     var patch = patches[nickname];
     var config = travisConfigForTarget(nickname);
     console.log('---');
-    console.log(`# For ${patch.github}, test = ${patch.test}`);
+    console.log(`# For ${patch.github}`);
     if (patch.test !== false) {
-        console.log(yaml.safeDump(config));
-        if (travisToken === undefined) {
-            console.error('TRAVIS_API_TOKEN env var not set, not executing');
-        } else {
-            var [owner, repo] = patch.github.split('/');
-            triggerTravis.pull({
-                token: travisToken,
-                owner: owner,
-                repo: repo,
-                branch: patch.branch || 'master',
-                config: config,
-                debug: false
-            });
-        }
+        console.log('# test: false, skipping.');
+        continue;
+    }
+    if ((patch.depends_on || []) == []) {
+        console.log('# No dependencies, skipping (normal Travis build should work). Set test: true to force.');
+        continue;
+    }
+
+    console.log(yaml.safeDump(config));
+    if (travisToken === undefined) {
+        console.error('TRAVIS_API_TOKEN env var not set, not executing');
+    } else {
+        var [owner, repo] = patch.github.split('/');
+        triggerTravis.pull({
+            token: travisToken,
+            owner: owner,
+            repo: repo,
+            branch: patch.branch || 'master',
+            config: config,
+            debug: false
+        });
     }
 }
