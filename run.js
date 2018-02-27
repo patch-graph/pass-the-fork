@@ -29,7 +29,8 @@ function travisConfigForTarget(targetNickname) {
             // https://github.com/travis-ci/docs-travis-ci-com/issues/1485
             `export INJECT_GEMS='${JSON.stringify(injectGems)}'`,
             "git clone https://github.com/patch-graph/gitjection",
-            "gitjection/injectors/inject-all.sh"
+            "gitjection/injectors/inject-all.sh",
+            "eval \"$(gitjection/injectors/original_before_install)\""
         ]
     };
 }

@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'yaml'
+
+puts YAML.safe_load(File.read('.travis.yml'))['before_install']
