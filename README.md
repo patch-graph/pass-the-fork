@@ -1,4 +1,4 @@
-# gitjection — inject forked dependencies into CI builds
+# pass-the-fork — inject forked dependencies into CI builds
 
 When making changes to several related repositories, by default CI tests each against unmodified dependencies.  This tool will allow explicitly requesting a testing against modified dependencies.
 

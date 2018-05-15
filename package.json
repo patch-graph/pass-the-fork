@@ -1,5 +1,5 @@
 {
-  "name": "gitjection",
+  "name": "pass-the-fork",
   "version": "0.0.1",
   "description": "inject forked ruby dependencies into Travis builds",
   "keywords": [
@@ -8,7 +8,7 @@
     "pull request"
   ],
   "license": "MIT",
-  "repository": "patch-graph/gitjection",
+  "repository": "patch-graph/pass-the-fork",
   "dependencies": {
     "js-yaml": "^3.10.0",
     "trigger-travis": "^0.1.0"

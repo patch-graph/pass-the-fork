@@ -6,6 +6,6 @@ injectors_dir="$(dirname "$0")"
 
 # Ruby gems
 if [ -e Gemfile ]; then
-  echo "gitjection: patched Gemfile to use inject.gem.* env vars."
+  echo "pass-the-fork: patched Gemfile to use inject.gem.* env vars."
   cat "$injectors_dir/Gemfile.append.rb" >> Gemfile
 fi
