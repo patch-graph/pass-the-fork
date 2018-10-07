@@ -1,5 +1,7 @@
 # pass-the-fork — inject forked dependencies into CI builds
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/patch-graph/pass-the-fork.svg)](https://greenkeeper.io/)
+
 When making changes to several related repositories, by default CI tests each against unmodified dependencies.  This tool will allow explicitly requesting a testing against modified dependencies.
 
 Currently working on injecting Ruby gems into Travis builds, for GitHub pull requests.  I'd love to expand each of these (details below).
