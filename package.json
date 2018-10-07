@@ -11,6 +11,6 @@
   "repository": "patch-graph/pass-the-fork",
   "dependencies": {
     "js-yaml": "^3.10.0",
-    "trigger-travis": "^0.1.0"
+    "trigger-travis": "^0.2.0"
   }
 }
