@@ -11,10 +11,28 @@ var patches = yaml.safeLoad(fs.readFileSync(yamlFilename, 'utf8'), {filename: ya
 var travisToken = process.env.TRAVIS_API_TOKEN;
 
 function travisConfigForTarget(targetNickname) {
+    var injectGitURLs = {};
     var injectGems = {};
     // TODO: Walk depends_on transitive closure
     for (let patchNickname of (patches[targetNickname].depends_on || [])) {
         var patch = patches[patchNickname];
+
+        // TODO: specify branch/commit!?
+        if (patch.base_github !== undefined) {
+            // https protocol
+            injectGitURLs[`https://github.com/${patch.base_github}`] =
+                injectGitURLs[`https://github.com/${patch.base_github}.git`] =
+                // git protocol
+                injectGitURLs[`git://github.com/${patch.base_github}`] =
+                injectGitURLs[`git://github.com/${patch.base_github}.git`] =
+                // ssh protocol
+                injectGitURLs[`ssh://git@github.com/${patch.base_github}`] =
+                injectGitURLs[`ssh://git@github.com/${patch.base_github}.git`] =
+                injectGitURLs[`git@github.com:${patch.base_github}`] =
+                injectGitURLs[`git@github.com:${patch.base_github}.git`] =
+                `https://github.com/${patch.github}`;
+        }
+
         if (patch.gem !== undefined) {
             injectGems[patch.gem] = {git: `https://github.com/${patch.github}`, branch: patch.branch};
         }
@@ -28,9 +46,11 @@ function travisConfigForTarget(targetNickname) {
             // with depending on how exactly `env:` was declared in original .travis.yml
             // https://github.com/travis-ci/docs-travis-ci-com/issues/1485
             `export INJECT_GEMS='${JSON.stringify(injectGems)}'`,
+            `export INJECT_GIT_URLS='${JSON.stringify(injectGitURLs)}'`,
             "git clone https://github.com/patch-graph/pass-the-fork",
-            "pass-the-fork/injectors/inject-all.sh",
-            "eval \"$(pass-the-fork/injectors/original_before_install)\""
+            'export PATH="$PWD/pass-the-fork/shims:$PATH"',
+            'pass-the-fork/injectors/inject-all.sh',
+            'eval "$(pass-the-fork/injectors/original_before_install)"'
         ]
     };
 }

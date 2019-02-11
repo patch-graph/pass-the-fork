@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+# Remove our shims/ dir from the PATH so we may call the real `git`.
+if ENV['_pass_the_fork_shims_git_prevent_recursion']
+  STDERR.puts "pass-the-fork: git shim infinite recursion! PATH=#{ENV['PATH']}"
+  exit 2
+end
+shims_dir = File.realpath(File.dirname($0))
+ENV['PATH'] = ENV['PATH'].split(':').reject do |d|
+  File.realpath(d) == shims_dir rescue false
+end.join(':')
+ENV['_pass_the_fork_shims_git_prevent_recursion'] = '1'
+
+git_args = ARGV
+
+if ENV['INJECT_GIT_URLS']
+  replacements = JSON.parse(ENV['INJECT_GIT_URLS'])
+
+  git_subcommand = git_args.find { |a| !a.start_with?('-') }
+  case git_subcommand
+  when 'clone', 'fetch', 'remote'
+    # TODO: select specific branch/commit!?
+    git_args = git_args.map {|a| replacements[a] || a }
+
+    # TODO what about overriding submodules?
+    # - At this point Travis already checked out original submodules,
+    #   so not enough to edit URL need to re-fetch.
+    # - Do we even get here in that scenario?!
+    #   No manual git command to intercept!
+  end
+end
+
+if ENV['INJECT_DEBUG']
+  STDERR.puts "pass-the-fork: original git command: git #{ARGV.join(' ')}"
+end
+if git_args != ARGV
+  STDERR.puts "pass-the-fork: modified git command: git #{git_args.join(' ')}"
+end
+
+exec('git', *git_args)
