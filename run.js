@@ -11,12 +11,34 @@ var patches = yaml.safeLoad(fs.readFileSync(yamlFilename, 'utf8'), {filename: ya
 var travisToken = process.env.TRAVIS_API_TOKEN;
 
 function travisConfigForTarget(targetNickname) {
+    var injectGitURLs = {};
     var injectGems = {};
     // TODO: Walk depends_on transitive closure
-    for (let patchNickname of (patches[targetNickname].depends_on || [])) {
-        var patch = patches[patchNickname];
+    for (const patchNickname of (patches[targetNickname].depends_on || [])) {
+        const patch = patches[patchNickname];
+        const forkInfo = {git: `https://github.com/${patch.github}`, branch: patch.branch};
+
+        if (patch.base_github !== undefined) {
+            const urlsToOverride = [
+                // https protocol
+                `https://github.com/${patch.base_github}`,
+                `https://github.com/${patch.base_github}.git`,
+                // git protocol
+                `git://github.com/${patch.base_github}`,
+                `git://github.com/${patch.base_github}.git`,
+                // ssh protocol
+                `ssh://git@github.com/${patch.base_github}`,
+                `ssh://git@github.com/${patch.base_github}.git`,
+                `git@github.com:${patch.base_github}`,
+                `git@github.com:${patch.base_github}.git`,
+            ];
+            for (const url of urlsToOverride) {
+                injectGitURLs[url] = forkInfo;
+            }
+        }
+
         if (patch.gem !== undefined) {
-            injectGems[patch.gem] = {git: `https://github.com/${patch.github}`, branch: patch.branch};
+            injectGems[patch.gem] = forkInfo;
         }
     }
 
@@ -28,9 +50,11 @@ function travisConfigForTarget(targetNickname) {
             // with depending on how exactly `env:` was declared in original .travis.yml
             // https://github.com/travis-ci/docs-travis-ci-com/issues/1485
             `export INJECT_GEMS='${JSON.stringify(injectGems)}'`,
+            `export INJECT_GIT_URLS='${JSON.stringify(injectGitURLs)}'`,
             "git clone https://github.com/patch-graph/pass-the-fork",
-            "pass-the-fork/injectors/inject-all.sh",
-            "eval \"$(pass-the-fork/injectors/original_before_install)\""
+            'export PATH="$PWD/pass-the-fork/shims:$PATH"',
+            'pass-the-fork/injectors/inject-all.sh',
+            'eval "$(pass-the-fork/injectors/original_before_install)"'
         ]
     };
 }
