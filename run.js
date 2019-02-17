@@ -14,27 +14,31 @@ function travisConfigForTarget(targetNickname) {
     var injectGitURLs = {};
     var injectGems = {};
     // TODO: Walk depends_on transitive closure
-    for (let patchNickname of (patches[targetNickname].depends_on || [])) {
-        var patch = patches[patchNickname];
+    for (const patchNickname of (patches[targetNickname].depends_on || [])) {
+        const patch = patches[patchNickname];
+        const forkInfo = {git: `https://github.com/${patch.github}`, branch: patch.branch};
 
-        // TODO: specify branch/commit!?
         if (patch.base_github !== undefined) {
-            // https protocol
-            injectGitURLs[`https://github.com/${patch.base_github}`] =
-                injectGitURLs[`https://github.com/${patch.base_github}.git`] =
+            const urlsToOverride = [
+                // https protocol
+                `https://github.com/${patch.base_github}`,
+                `https://github.com/${patch.base_github}.git`,
                 // git protocol
-                injectGitURLs[`git://github.com/${patch.base_github}`] =
-                injectGitURLs[`git://github.com/${patch.base_github}.git`] =
+                `git://github.com/${patch.base_github}`,
+                `git://github.com/${patch.base_github}.git`,
                 // ssh protocol
-                injectGitURLs[`ssh://git@github.com/${patch.base_github}`] =
-                injectGitURLs[`ssh://git@github.com/${patch.base_github}.git`] =
-                injectGitURLs[`git@github.com:${patch.base_github}`] =
-                injectGitURLs[`git@github.com:${patch.base_github}.git`] =
-                `https://github.com/${patch.github}`;
+                `ssh://git@github.com/${patch.base_github}`,
+                `ssh://git@github.com/${patch.base_github}.git`,
+                `git@github.com:${patch.base_github}`,
+                `git@github.com:${patch.base_github}.git`,
+            ];
+            for (const url of urlsToOverride) {
+                injectGitURLs[url] = forkInfo;
+            }
         }
 
         if (patch.gem !== undefined) {
-            injectGems[patch.gem] = {git: `https://github.com/${patch.github}`, branch: patch.branch};
+            injectGems[patch.gem] = forkInfo;
         }
     }
 

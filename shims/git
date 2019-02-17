@@ -13,17 +13,41 @@ ENV['PATH'] = ENV['PATH'].split(':').reject do |d|
 end.join(':')
 ENV['_pass_the_fork_shims_git_prevent_recursion'] = '1'
 
-git_args = ARGV
+git_args = ARGV.dup
 
 if ENV['INJECT_GIT_URLS']
-  replacements = JSON.parse(ENV['INJECT_GIT_URLS'])
+  configs = JSON.parse(ENV['INJECT_GIT_URLS'])
 
   git_subcommand = git_args.find { |a| !a.start_with?('-') }
   case git_subcommand
-  when 'clone', 'fetch', 'remote'
-    # TODO: select specific branch/commit!?
-    git_args = git_args.map {|a| replacements[a] || a }
+  when 'clone'
+    # Look for one of URLs we want to intercept
+    injected = nil
+    git_args = git_args.map do |a|
+      if configs[a]
+        injected = configs[a]
+        injected['git']
+      else
+        a
+      end
+    end
 
+    if injected
+      # replace -b foo / --branch=foo / append one if not specified
+      new_args = []
+      while !git_args.empty?
+        case a = git_args.shift
+        when '-b', '--branch'
+          git_args.shift
+        when /^-b/, /^--branch=/
+        else
+          new_args << a
+        end
+      end
+      git_args = new_args + ["--branch=#{injected['branch']}"]
+    end
+
+    # TODO: 'fetch', 'remote'
     # TODO what about overriding submodules?
     # - At this point Travis already checked out original submodules,
     #   so not enough to edit URL need to re-fetch.
