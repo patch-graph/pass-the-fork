@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
 require 'yaml'
 
+# travis.yml supports either a single string or array of strings;
+# puts() handles either form.
 puts YAML.safe_load(File.read('.travis.yml'))['before_install']
