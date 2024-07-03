@@ -1,3 +1,10 @@
+# ⚠️ long abandoned ⚠️
+
+[this grew out of my frustrations while I worked on ManageIQ but I've moved to other interests.
+
+- for Ruby specifically, see https://github.com/ManageIQ/bundler-inject, well-maintained for the "override dependencies" part 👍
+- for CI running, they built https://github.com/ManageIQ/manageiq-cross_repo but that is specific setup for their project, falls short of the hopes I had here to allow anyone to launch builds with overrides against _any_ project out there 🤷]
+
 # pass-the-fork — inject forked dependencies into CI builds
 
 When making changes to several related repositories, by default CI tests each against unmodified dependencies.  This tool will allow explicitly requesting a testing against modified dependencies.
